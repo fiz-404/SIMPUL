@@ -66,9 +66,13 @@ Dokumentasi request/response lengkap untuk setiap endpoint ada di `docs/obsidian
 
 ## Kontribusi Tim
 
-- **Fairuz** — backend (Laravel, PostgreSQL, API Groq)
-- **Radit** — frontend (Vue.js)
-- **Aji** — frontend (Vue.js)
+Hafidz — 100% Backend Lead (Laravel, Integrasi Groq API, Server DevOps)
+
+Radit — 100% Frontend (Vue.js UI Slicing & Integrasi API)
+
+Fairuz — Database Schema & Data Entry (PostgreSQL, Seeder)
+
+Aji — Prompt Engineering & Pengumpulan Dataset Uji Coba Chat WA
 
 Panduan branching:
 
