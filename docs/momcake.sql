@@ -1,0 +1,293 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict YWoBtiB8wCPpgmQGY7CVWK6KxpL6upkhicZNLMKgql6tFrCQiTnqAIlUdZYPWgc
+
+-- Dumped from database version 18.6
+-- Dumped by pg_dump version 18.6
+
+-- Started on 2026-10-11 11:50:46
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 222 (class 1259 OID 16402)
+-- Name: User; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."User" (
+    id integer NOT NULL,
+    nama character varying(100) NOT NULL,
+    no character varying(20) NOT NULL,
+    alamat text
+);
+
+
+ALTER TABLE public."User" OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16401)
+-- Name: User_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."User_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."User_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5039 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: User_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."User_id_seq" OWNED BY public."User".id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 16390)
+-- Name: admin; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admin (
+    id integer NOT NULL,
+    username character varying(50) NOT NULL,
+    password character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.admin OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 16389)
+-- Name: admin_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.admin_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.admin_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5040 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: admin_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.admin_id_seq OWNED BY public.admin.id;
+
+
+--
+-- TOC entry 224 (class 1259 OID 16414)
+-- Name: pesanan; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pesanan (
+    id integer NOT NULL,
+    admin_id integer NOT NULL,
+    user_id integer NOT NULL,
+    item character varying(255) NOT NULL,
+    deskripsi text,
+    status character varying(20) DEFAULT 'Baru'::character varying,
+    total_harga numeric(12,2) NOT NULL,
+    CONSTRAINT pesanan_status_check CHECK (((status)::text = ANY ((ARRAY['Baru'::character varying, 'Diproses'::character varying, 'Selesai'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.pesanan OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16413)
+-- Name: pesanan_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pesanan_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pesanan_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5041 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: pesanan_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pesanan_id_seq OWNED BY public.pesanan.id;
+
+
+--
+-- TOC entry 4867 (class 2604 OID 16405)
+-- Name: User id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."User" ALTER COLUMN id SET DEFAULT nextval('public."User_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4866 (class 2604 OID 16393)
+-- Name: admin id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin ALTER COLUMN id SET DEFAULT nextval('public.admin_id_seq'::regclass);
+
+
+--
+-- TOC entry 4868 (class 2604 OID 16417)
+-- Name: pesanan id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pesanan ALTER COLUMN id SET DEFAULT nextval('public.pesanan_id_seq'::regclass);
+
+
+--
+-- TOC entry 5031 (class 0 OID 16402)
+-- Dependencies: 222
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."User" (id, nama, no, alamat) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5029 (class 0 OID 16390)
+-- Dependencies: 220
+-- Data for Name: admin; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.admin (id, username, password) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5033 (class 0 OID 16414)
+-- Dependencies: 224
+-- Data for Name: pesanan; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pesanan (id, admin_id, user_id, item, deskripsi, status, total_harga) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5042 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: User_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."User_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5043 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: admin_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.admin_id_seq', 1, false);
+
+
+--
+-- TOC entry 5044 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: pesanan_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.pesanan_id_seq', 1, false);
+
+
+--
+-- TOC entry 4876 (class 2606 OID 16412)
+-- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."User"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4872 (class 2606 OID 16398)
+-- Name: admin admin_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4874 (class 2606 OID 16400)
+-- Name: admin admin_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_username_key UNIQUE (username);
+
+
+--
+-- TOC entry 4878 (class 2606 OID 16428)
+-- Name: pesanan pesanan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pesanan
+    ADD CONSTRAINT pesanan_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4879 (class 2606 OID 16429)
+-- Name: pesanan fk_admin; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pesanan
+    ADD CONSTRAINT fk_admin FOREIGN KEY (admin_id) REFERENCES public.admin(id) ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 4880 (class 2606 OID 16434)
+-- Name: pesanan fk_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pesanan
+    ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES public."User"(id) ON DELETE RESTRICT;
+
+
+-- Completed on 2026-10-11 11:50:46
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict YWoBtiB8wCPpgmQGY7CVWK6KxpL6upkhicZNLMKgql6tFrCQiTnqAIlUdZYPWgc
+

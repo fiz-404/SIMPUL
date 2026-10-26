@@ -1,58 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIMPUL — Sistem Informasi Manajemen Pesanan Usaha Lokal (Mom's Cake)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SIMPUL adalah backend API untuk mengelola pesanan toko kue **Mom's Cake**: autentikasi admin, manajemen pesanan dan pelanggan, hingga ekstraksi otomatis data pesanan dari chat WhatsApp melalui AI.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Bagian | Teknologi |
+|---|---|
+| Backend | Laravel (framework `^13.17` di composer.json) + Sanctum untuk API auth |
+| PHP | >= 8.3 |
+| Database | PostgreSQL (tabel `admin`, `public."User"`, `pesanan`) |
+| AI | Groq API (chat completions, OpenAI-compatible) — default `llama-3.3-70b-versatile`, aktif via env `GROQ_MODEL` |
+| Frontend | Vue.js (repositori terpisah) |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+> Catatan: proyek ini dibangun di atas skeleton Laravel terbaru; nama class tetap `App\Models\...` standar Laravel.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalasi & Setup Lokal
 
 ```bash
-composer require laravel/boost --dev
+# 1. Install dependency
+composer install
 
-php artisan boost:install
+# 2. Siapkan environment
+cp .env.example .env
+php artisan key:generate
+
+# 3. Atur koneksi PostgreSQL di .env
+#    DB_CONNECTION=pgsql
+#    DB_HOST=127.0.0.1
+#    DB_PORT=5432
+#    DB_DATABASE=SIMPUL
+#    DB_USERNAME=postgres
+#    DB_PASSWORD=...
+#    GROQ_API_KEY=gsk_...       (dari console.groq.com)
+#    GROQ_MODEL=openai/gpt-oss-120b   # model yang tersedia di akun Anda
+
+# 4. Schema database + data awal
+php artisan migrate --seed
+#    (utan admin 'admin' / 'admin123' dibuat oleh DatabaseSeeder)
+#    Alternatif: import skema manual dari docs/momcake.sql, lalu php artisan db:seed
+
+# 5. Jalankan server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## API Endpoints
 
-## Contributing
+Semua endpoint protected wajib mengirim header:
+```
+Authorization: Bearer <token>
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Method | Endpoint | Auth | Fungsi |
+|---|---|---|---|
+| POST | `/api/login` | – | Login admin, mengembalikan token Sanctum |
+| POST | `/api/logout` | ✅ | Menghapus token aktif |
+| GET | `/api/user` | ✅ | Profil admin yang sedang login |
+| GET | `/api/customers` | ✅ | Daftar seluruh pelanggan (+ jumlah pesanan) |
+| GET | `/api/customers/{id}` | ✅ | Detail pelanggan + riwayat pesanan |
+| GET | `/api/pesanan` | ✅ | Daftar semua pesanan (+ relasi admin & user) |
+| POST | `/api/pesanan` | ✅ | Buat pesanan baru (status awal `Baru`) |
+| PATCH | `/api/pesanan/{id}/status` | ✅ | Ubah status: `Baru` / `Diproses` / `Selesai` |
+| POST | `/api/extract-chat` | ✅ | Ekstrak data pesanan dari teks chat WhatsApp via AI |
 
-## Code of Conduct
+Dokumentasi request/response lengkap untuk setiap endpoint ada di `docs/obsidian-vault/API_Documentation.md`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Kontribusi Tim
 
-## Security Vulnerabilities
+- **Fairuz** — backend (Laravel, PostgreSQL, API Groq)
+- **Radit** — frontend (Vue.js)
+- **Aji** — frontend (Vue.js)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Panduan branching:
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Branch utama: `main` — selalu stabil, hanya menerima merge dari `dev` (atau PR yang lolos review).
+2. Branch kerja: `dev` untuk integrasi antar-anggota.
+3. Buat branch feature dengan nama `feat/<nama>`, contoh: `feat/extract-chat`, `fix/bcrypt-login`.
+4. Sebelum PR:
+   ```bash
+   php -l <file yang diubah>     # cek syntax
+   composer test                 # test suite
+   ```
+5. Commit message ringkas dan deskriptif: `fix: guard login biar error-nya konsisten 401`.
+6. Jangan commit `.env`, `vendor/`, atau file besar — sudah di-maintain di `.gitignore`.
